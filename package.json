@@ -6,9 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "data:reset": "node scripts/reset-demo-data.mjs",
+    "api:smoke": "node scripts/smoke-api.mjs",
+    "test": "node --import tsx --test 'tests/unit/*.test.ts'",
+    "test:e2e": "node --import tsx --test 'tests/e2e/*.test.ts'",
+    "supabase:verify": "node scripts/verify-supabase.mjs",
+    "data:seed": "node scripts/seed-demo-data.mjs"
   },
   "dependencies": {
+    "@pollar/core": "^0.11.3",
+    "@pollar/react": "^0.11.3",
+    "@supabase/supabase-js": "^2.116.0",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8"
@@ -21,6 +30,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }
