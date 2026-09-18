@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { PollarRoot } from "@/components/pollar/PollarRoot";
+import { AmbientBackground } from "@/components/site/AmbientBackground";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { pollarApiKey, pollarMode } from "@/lib/mode";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -28,12 +30,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
+        <AmbientBackground />
         <PollarRoot apiKey={pollarApiKey()} mode={mode}>
           <SiteHeader mode={mode === "live" ? "live" : "sandbox"} />
-          <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
+          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
+            {children}
+          </main>
           <SiteFooter />
         </PollarRoot>
       </body>

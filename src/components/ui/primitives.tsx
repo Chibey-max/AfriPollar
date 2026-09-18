@@ -17,7 +17,7 @@ export function Card({
   return (
     <As
       className={cx(
-        "rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(20,24,29,0.04)]",
+        "panel-surface card-rest border border-line",
         className,
       )}
     >
@@ -39,7 +39,7 @@ export function CardHeader({
     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
       <div className="min-w-0">
         <h2 className="text-sm font-semibold tracking-tight text-ink">{title}</h2>
-        {description ? <p className="mt-1 text-sm text-ink-soft">{description}</p> : null}
+        {description ? <p className="mt-1 text-sm leading-relaxed text-ink-soft">{description}</p> : null}
       </div>
       {action}
     </div>
@@ -58,7 +58,7 @@ export function Label({ children, htmlFor }: { children: ReactNode; htmlFor?: st
 }
 
 const fieldClass =
-  "w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/25 disabled:opacity-60";
+  "w-full rounded-xl border border-line bg-surface-muted/70 px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/25 disabled:opacity-60";
 
 export function Input(props: ComponentProps<"input">) {
   return <input {...props} className={cx(fieldClass, props.className)} />;
@@ -73,11 +73,11 @@ export function Textarea(props: ComponentProps<"textarea">) {
 }
 
 const buttonBase =
-  "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-55";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55";
 
 const buttonVariants = {
-  primary: "bg-accent text-accent-ink hover:opacity-90",
-  secondary: "border border-line-strong bg-surface text-ink hover:bg-surface-muted",
+  primary: "bg-accent text-accent-ink shadow-[0_0_24px_rgb(47_212_134/0.16)] hover:-translate-y-0.5 hover:bg-destination",
+  secondary: "border border-line-strong bg-surface/70 text-ink hover:-translate-y-0.5 hover:bg-surface-muted",
   ghost: "text-ink-soft hover:bg-surface-muted hover:text-ink",
 } as const;
 

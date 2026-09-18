@@ -12,12 +12,12 @@ const NAV = [
 
 export function SiteHeader({ mode }: { mode: CorridorMode }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-canvas/85 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
+    <header className="sticky top-0 z-30 border-b border-line bg-canvas/78 shadow-[var(--shadow-nav)] backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" className="flex min-h-11 items-center gap-2.5">
           <span
             aria-hidden
-            className="size-5 rounded-md bg-gradient-to-br from-origin to-destination"
+            className="size-6 rounded-lg bg-gradient-to-br from-origin via-accent to-signal shadow-[0_0_24px_rgb(47_212_134/0.18)]"
           />
           <span className="text-sm font-semibold tracking-tight text-ink">AfriPollar</span>
         </Link>
@@ -28,7 +28,7 @@ export function SiteHeader({ mode }: { mode: CorridorMode }) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 text-sm text-ink-soft transition-colors hover:bg-surface-muted hover:text-ink"
+                  className="link-underline flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 font-mono text-xs uppercase tracking-wider text-ink-soft transition-colors hover:text-accent"
                 >
                   {item.label}
                 </Link>

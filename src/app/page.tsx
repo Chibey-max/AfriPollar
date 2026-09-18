@@ -18,35 +18,54 @@ export default async function CorridorHomePage() {
   const settledUsdc = settled.reduce((total, transfer) => total + transfer.settlementAmount, 0);
 
   return (
-    <div className="space-y-8">
-      <section className="space-y-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-origin">
-          Africa → Bolivia corridor
-        </p>
-        <h1 className="max-w-2xl text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">
-          The African leg of the Pollar corridor, built for how local money
-          actually moves.
-        </h1>
-        <p className="max-w-2xl text-base leading-relaxed text-ink-soft">
-          A sender funds through a bank transfer, mobile money, or a verified local agent. The agent
-          confirms receipt, Pollar settles the value in USDC on Stellar, and the recipient in
-          Bolivia gets a claim page with proof.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <ButtonLink href="/transfer/new">Start a transfer</ButtonLink>
-          <ButtonLink href="/agent" variant="secondary">
-            Open agent desk
-          </ButtonLink>
+    <div className="space-y-10">
+      <section className="grid min-h-[calc(100svh-12rem)] items-center gap-8 py-8 lg:grid-cols-[1.06fr_0.94fr] lg:gap-12">
+        <div className="reveal-up flex flex-col gap-6">
+          <h1 className="max-w-3xl text-5xl font-semibold leading-[1.02] tracking-[-0.03em] text-ink sm:text-6xl lg:text-7xl">
+            The African leg of the Pollar corridor, built for live settlement proof.
+          </h1>
+          <p className="max-w-2xl text-lg leading-8 text-ink-soft sm:text-xl">
+            A sender funds through bank transfer, mobile money, or a verified local agent. The
+            agent confirms receipt, Pollar settles USDC on Stellar, and the recipient in Bolivia
+            gets a claim page with proof.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink href="/transfer/new">Start a transfer</ButtonLink>
+            <ButtonLink href="/agent" variant="secondary">
+              Open agent desk
+            </ButtonLink>
+          </div>
+          <p className="font-mono text-xs uppercase tracking-[0.22em] text-ink-faint">
+            Pollar testnet · Stellar USDC · verified agent confirmation
+          </p>
+        </div>
+
+        <div className="reveal-up reveal-delay-2">
+          <Card className="overflow-hidden">
+            <div className="border-b border-line px-5 py-4">
+              <p className="font-mono text-xs uppercase tracking-[0.22em] text-signal">
+                Live corridor console
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink">
+                Africa → Pollar → Bolivia
+              </h2>
+            </div>
+            <div className="grid gap-px bg-line">
+              <ConsoleRow label="Transfers created" value={String(transfers.length)} />
+              <ConsoleRow label="Awaiting local funding" value={String(awaitingFunding.length)} />
+              <ConsoleRow label="Settled through Pollar" value={formatUsdc(settledUsdc)} />
+            </div>
+            <div className="bg-surface-muted/70 px-5 py-4">
+              <p className="text-sm leading-6 text-ink-soft">
+                Local rails stay honest as sandbox instructions. The Pollar wallet and Stellar
+                settlement leg are live-mode capable and record transaction proof.
+              </p>
+            </div>
+          </Card>
         </div>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-3">
-        <Stat label="Transfers created" value={String(transfers.length)} />
-        <Stat label="Awaiting local funding" value={String(awaitingFunding.length)} />
-        <Stat label="Settled through Pollar" value={formatUsdc(settledUsdc)} />
-      </section>
-
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader
           title="Recent transfers"
           description="Every corridor transfer created on this deployment."
@@ -102,7 +121,7 @@ export default async function CorridorHomePage() {
         )}
       </Card>
 
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader
           title="Supported corridors"
           description="Destination stays fixed to Bolivia so the corridor claim stays honest."
@@ -132,11 +151,11 @@ export default async function CorridorHomePage() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function ConsoleRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-line bg-surface px-5 py-4">
-      <p className="text-xs uppercase tracking-wider text-ink-faint">{label}</p>
-      <p className="num mt-2 text-2xl font-semibold tracking-tight text-ink">{value}</p>
+    <div className="flex items-center justify-between gap-4 bg-surface px-5 py-4">
+      <p className="font-mono text-xs uppercase tracking-wider text-ink-faint">{label}</p>
+      <p className="num text-2xl font-semibold tracking-tight text-ink">{value}</p>
     </div>
   );
 }
