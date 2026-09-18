@@ -1,69 +1,142 @@
-import Image from "next/image";
+import Link from "next/link";
+import { CORRIDOR_ROUTES, COUNTRY_LABELS, FUNDING_METHOD_LABELS } from "@/data/corridor-config";
+import { formatDuration, formatLocal, formatRelative, formatUsdc } from "@/lib/format";
+import { listTransfers } from "@/lib/transfer-store";
+import { ButtonLink, Card, CardHeader, EmptyState } from "@/components/ui/primitives";
+import { CountryChip, StatusBadge } from "@/components/transfer/badges";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function CorridorHomePage() {
+  const transfers = await listTransfers();
+  const settled = transfers.filter((transfer) =>
+    ["settled_on_stellar", "payout_ready", "completed"].includes(transfer.status),
+  );
+  const awaitingFunding = transfers.filter(
+    (transfer) => transfer.status === "awaiting_local_funding",
+  );
+  const settledUsdc = settled.reduce((total, transfer) => total + transfer.settlementAmount, 0);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="space-y-8">
+      <section className="space-y-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-origin">
+          Africa → Bolivia corridor
+        </p>
+        <h1 className="max-w-2xl text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">
+          The African leg of the Pollar corridor, built for how local money
+          actually moves.
+        </h1>
+        <p className="max-w-2xl text-base leading-relaxed text-ink-soft">
+          A sender funds through a bank transfer, mobile money, or a verified local agent. The agent
+          confirms receipt, Pollar settles the value in USDC on Stellar, and the recipient in
+          Bolivia gets a claim page with proof.
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <ButtonLink href="/transfer/new">Start a transfer</ButtonLink>
+          <ButtonLink href="/agent" variant="secondary">
+            Open agent desk
+          </ButtonLink>
+        </div>
+      </section>
+
+      <section className="grid gap-3 sm:grid-cols-3">
+        <Stat label="Transfers created" value={String(transfers.length)} />
+        <Stat label="Awaiting local funding" value={String(awaitingFunding.length)} />
+        <Stat label="Settled through Pollar" value={formatUsdc(settledUsdc)} />
+      </section>
+
+      <Card>
+        <CardHeader
+          title="Recent transfers"
+          description="Every corridor transfer created on this deployment."
+          action={
+            <ButtonLink href="/transfer/new" variant="secondary">
+              New transfer
+            </ButtonLink>
+          }
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+        {transfers.length === 0 ? (
+          <EmptyState
+            title="No transfers yet"
+            body="Create the first corridor transfer to see the funding, settlement, and payout legs light up."
+            action={<ButtonLink href="/transfer/new">Start a transfer</ButtonLink>}
+          />
+        ) : (
+          <ul className="divide-y divide-line">
+            {transfers.slice(0, 8).map((transfer) => (
+              <li key={transfer.id}>
+                <Link
+                  href={`/transfer/${transfer.id}`}
+                  className="block px-5 py-4 transition-colors hover:bg-surface-muted"
+                >
+                  {/* Name and amount lead; everything else wraps beneath, so a
+                      long recipient name is never squeezed to an ellipsis. */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-ink">{transfer.recipientName}</p>
+                      <p className="num mt-0.5 text-xs text-ink-faint">
+                        {formatLocal(transfer.sourceAmount, transfer.sourceCurrency)} ·{" "}
+                        {FUNDING_METHOD_LABELS[transfer.fundingMethod]}
+                      </p>
+                    </div>
+                    <span className="num shrink-0 text-sm font-medium text-ink">
+                      {formatUsdc(transfer.settlementAmount)}
+                    </span>
+                  </div>
+                  <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                    <CountryChip code={transfer.senderCountry} tone="origin" />
+                    <span aria-hidden className="text-ink-faint">
+                      →
+                    </span>
+                    <CountryChip code="BO" tone="destination" />
+                    <StatusBadge status={transfer.status} />
+                    <span className="num text-xs text-ink-faint">
+                      {formatRelative(transfer.createdAt)}
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      <Card>
+        <CardHeader
+          title="Supported corridors"
+          description="Destination stays fixed to Bolivia so the corridor claim stays honest."
+        />
+        <ul className="divide-y divide-line">
+          {CORRIDOR_ROUTES.map((route) => (
+            <li
+              key={route.id}
+              className="flex flex-wrap items-center justify-between gap-3 px-5 py-4"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+              <div>
+                <p className="text-sm font-medium text-ink">
+                  {COUNTRY_LABELS[route.fromCountry]} → {COUNTRY_LABELS[route.toCountry]}
+                </p>
+                <p className="num mt-0.5 text-xs text-ink-faint">
+                  {route.sourceCurrency} → {route.settlementAsset} → {route.payoutCurrency}
+                </p>
+              </div>
+              <p className="num text-xs text-ink-soft">
+                {route.estimatedFeePercent}% fee · {formatDuration(route.estimatedTimeMinutes)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </Card>
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-line bg-surface px-5 py-4">
+      <p className="text-xs uppercase tracking-wider text-ink-faint">{label}</p>
+      <p className="num mt-2 text-2xl font-semibold tracking-tight text-ink">{value}</p>
     </div>
   );
 }

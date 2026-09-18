@@ -1,26 +1,98 @@
 @import "tailwindcss";
 
+/*
+  AfriPollar corridor design tokens.
+  The palette encodes the corridor itself: a warm origin (Africa) resolving
+  into a cool settled destination (Bolivia), on a paper-like financial canvas.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --canvas: #f7f6f3;
+  --surface: #ffffff;
+  --surface-muted: #f1efea;
+  --ink: #14181d;
+  --ink-soft: #545c66;
+  --ink-faint: #8b939d;
+  --line: #e2ddd4;
+  --line-strong: #cfc8bb;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --origin: #b4530d;
+  --origin-soft: #fbead9;
+  --destination: #0d6e5b;
+  --destination-soft: #dcefe9;
+  --accent: #10564a;
+  --accent-ink: #ffffff;
+
+  --warn: #9a6a05;
+  --warn-soft: #fbf0d5;
+  --danger: #a32a1f;
+  --danger-soft: #fbe3e0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --canvas: #0c0f12;
+    --surface: #14181d;
+    --surface-muted: #1b2027;
+    --ink: #edeae4;
+    --ink-soft: #a3aab4;
+    --ink-faint: #737c87;
+    --line: #262c34;
+    --line-strong: #39414b;
+
+    --origin: #e2924a;
+    --origin-soft: #33220f;
+    --destination: #4fc0a4;
+    --destination-soft: #0f2b25;
+    --accent: #4fc0a4;
+    --accent-ink: #06231d;
+
+    --warn: #dcae4a;
+    --warn-soft: #302510;
+    --danger: #e98577;
+    --danger-soft: #331715;
   }
 }
 
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-origin: var(--origin);
+  --color-origin-soft: var(--origin-soft);
+  --color-destination: var(--destination);
+  --color-destination-soft: var(--destination-soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+/* Tabular figures everywhere money is shown keeps columns from dancing. */
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
